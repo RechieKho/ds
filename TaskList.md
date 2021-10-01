@@ -1,0 +1,12 @@
+# Tasklist
+- [ * ] Create GenericPrimitiveType
+- [ * ] Complete HashTable.c basic functionality
+- [ ] Add Logging functionality
+- [ ] Add HashTable.c functionality
+	- [ ] Able to load json file to hashtable with schema
+	- [ ] Able to write HashTable to json format
+- [ * ] Write a full documentation about HashTable in HashTable.c
+- [ * ] Write a full documentation about LinkedList in LinkedList.c
+- [ ] Allow cross-platform
+- [ ] create a static library and a dynamic library and move on to Configurator
+- [ ] Upload to GitHub?
