@@ -35,19 +35,17 @@ Basic rules:
 Rules for declaration of `struct`:
 1. All declaration of `struct` must use typedef (for the sake of convinience lmao).
 2. All `struct` name must have prefix of `s_` (example: `s_HashTable`). The name should also be in `PascalCase`. 
-3. Description of each property of a `struct` must be written above the declaration as multiline comment. 
-4. Names of properties are in `snake_case`. 
 
 Rules for declaration of `union`:
 1. All declaration of `union` must use typedef (for the sake of convinience lmao).
 2. All `union` name must have prefix of `u_` (example: `u_GP`). The name should also be in `PascalCase`. 
-3. The name of 'properties' of a `union` must be its type (or something that describes its type like `string` for `char *`). It should also be in `snake_case`
+3. The name of 'properties' of a `union` must be its type (or something that describes its type like `string` for `char *`). It should also be in `UPPER_SNAKE_CASE`
 4. Notes about whether a `union` should be stored as a pointer or value when storing it must be mentioned above the declaration as a singleline comment. 
 
 Rules for declaration of `enum`:
 1. All declaration of `enum` must use typedef (for the sake of convinience lmao).
 2. All `enum` (include its value) must have prefix of `e_` (example: `e_days`). The name of `enum` (not the values) should be in `PascalCase`
-3. The values' name must have shortened `enum`'s name as it prefix. The values' name and the prefix is separated with an underscore. 
+3. The values' name must have shortened `enum`'s name as it prefix (if the name is already shortened, just use the name). The values' name and the prefix is separated with an underscore. 
 **HOW TO SHORTEN A NAME**: Remove all the vowels, pick first two letter of each word, then make it all capitalized. (For an example: `HashTable` -> `HSTB`). 
 4. The values' name is in `cammelCase`.
 
@@ -73,3 +71,7 @@ Rules for function implementation:
 6. Open curly bracket in new line for function only.
 7. Local variable names are in `snake_case`. 
 8. Control flow's open curly bracket not in new line. 
+
+Rules for implementation of `struct`:
+3. Description of each property of a `struct` must be written above the implementation as multiline comment. 
+4. Names of properties are in `snake_case`. 

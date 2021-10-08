@@ -5,135 +5,272 @@
 #include "GP.h"
 
 /*
- * `LinkedList`:
- * 	`LinkedList` is a complex datatype that behaves like list in python.
+ * -- desc --
+ * `s_LinkedList` is a complex datatype that behaves like list in python.
  *
- * 	# How it works?
+ * -- How it works? --
  *
- * 	(LinkedList: length, *node) -> (LinkedNode: value, *prev, *next) -> (LinkedNode: value, *prev, *next) ->...
+ * (s_LinkedList: length, *node) -> (s_LinkedNode: value, *prev, *next) -> (s_LinkedNode: value, *prev, *next) ->...
  *
- * 	`LinkedList` is basically bunch of `LinkedNode` linked together using pointer.
- * 	It this approach makes adding and removing stuff easier compared to an array.
+ * `s_LinkedList` is basically bunch of `s_LinkedNode` linked together using pointer.
+ * It this approach makes adding and removing stuff orderly easier compared to an array.
+ * */
+
+typedef struct s_LinkedNode s_LinkedNode;
+
+typedef struct s_LinkedList s_LinkedList;
+
+/*
+ * -- desc --
+ * Create a s_LinkedNode
  *
- * Note:
- * 	If you are crazy and decides to insert a `LinkedNode` that already
- * 	inserted in other list, just make sure the `LinkedNode` is REALLY
- * 	not in a list before freeing them. Freedom or hell depends on you.
- * */
-
-/*
- * @value:
- * 	A GP (Generic Primitive, union, from GP.h). stores value.
+ * -- param --
+ * @value - value that will be stored in the s_LinkedNode
+ * @type - the type of value that will be stored
  *
- * @type:
- * 	A GPT (Generic Primitive Type, enum, from GP.h). type of @value.
+ * -- return --
+ *  returns a `s_LinkedNode` on success
+ *  returns a NULL pointer on fail
+ * */
+s_LinkedNode *LNLS_createNode(u_GP value, e_GPT type);
+
+/*
+ * -- desc --
+ * Create a s_LinkedList
  *
- * @next:
- * 	A `LinkedNode *`. stores the next LinkedNode.
+ * -- param --
+ * no param
  *
- * @prev:
- * 	A `LinkedNode *`. stores the previous LinkedNode
+ * -- return --
+ * return a `s_LinkedList` on success
+ * return a NULL pointer on fail
+ * */
+s_LinkedList *LNLS_create();
+
+/*
+ * -- desc --
+ * Check is index valid in s_LinkedList
  *
- * */
-typedef struct LinkedNode{
-	GP value;
-	GPT type;
-	struct LinkedNode *next;
-	struct LinkedNode *prev;
-} LinkedNode;
-
-/*
- * @node:
- * 	A `LinkedNode *`. A pointer to a `LinkedNode`
+ * -- param --
+ * @list - LinkedList that will be checked
+ * @index - index of the LinkedList
  *
- * @length:
- * 	An `unsigned int`. records the length of the `LinkedList`	
+ * -- return --
+ * return true if the list have the index
+ * return false if the list do not have the index
  * */
-typedef struct LinkedList {
-	LinkedNode *node;
-	unsigned int length;
-} LinkedList;
+bool LNLS_isIndexValid(s_LinkedList *list, unsigned int index);
 
 /*
- * Create a LinkedNode
- * */
-LinkedNode *LL_createNode(GP value, GPT type);
-
-/*
- * Create a LinkedList
- * */
-LinkedList *LL_create();
-
-/*
- * Check is index valid in LinkedList
- * */
-bool LL_isIndexValid(LinkedList *list, unsigned int index);
-
-/*
- * Get LinkedNode from LinkedList using index
- * */
-LinkedNode *LL_getNode(LinkedList *list, unsigned int index);
-
-/*
- * Get value of LinkedNode from LinkedList using index
- * */
-GP LL_get(LinkedList *list, unsigned int index);
-
-/*
- * Insert LinkedNode at index given in a LinkedList, the index of inserted node = index given
+ * -- desc --
+ * Get s_LinkedNode from s_LinkedList using index
  *
- * Note:
- * 	If you are crazy and decides to insert a `LinkedNode` that already
- * 	inserted in other list, just make sure the `LinkedNode` is REALLY
- * 	not in a list before freeing them.
- * */
-bool LL_insertNode(LinkedList *list, LinkedNode *new_node, unsigned int index);
-
-/*
- * Create a LinkedNode and insert it at index given in a LinkedList, the index of inserted node = index given
- * */
-bool LL_insert(LinkedList *list, GP value, GPT type, unsigned int index);
-
-/*
- * LL_insert but the LinkedNode created is inserted at the end of LinkedList
- * */
-bool LL_append(LinkedList *list, GP value, GPT type);
-
-/*
- * Change value of a LinkedNode at index given in a LinkedList
- * */
-bool LL_changeValue(LinkedList *list, GP value, GPT type, unsigned int index);
-
-/*
- * Pop a LinkedNode at index given in a LinkedList
- * (Take a `LinkedNode` out from the chain and return it)
- * */
-LinkedNode *LL_popNode(LinkedList *list, unsigned int index);
-
-/*
- * Free a LinkedNode at index given in a LinkedList
- * */
-bool LL_freeNode(LinkedList *list, unsigned int index);
-
-/*
- * Free a LinkedNode which its value is same as value given
- * */
-bool LL_freeValue(LinkedList *list, GP value);
-
-/*
- * Free whole LinkedList
+ * -- param --
+ * @list - LinkedList that will be used
+ * @index - index of the node to be returned
  *
- * Note: 
- * 	it really just loop through the list and free the node one by one and then free `LinkedList`.
- * 	If you are a crazy person that decides to reuse a `LinkedNode` that are currently in a list,
- * 	just beware that there is no mechanism to check that and it will just free the node.
- *
+ * -- return --
+ * return `s_LinkedNode` on success
+ * return NULL pointer on fail
  * */
-bool LL_free(LinkedList *list);
+s_LinkedNode *LNLS_getNode(s_LinkedList *list, unsigned int index);
 
 /*
- * Frint a LinkedList
+ * -- desc --
+ * Get length of s_LinkedList
+ *
+ * -- param --
+ * @list - LinkedList that will be used
+ *
+ * -- return --
+ * the length of the list
  * */
-void LL_print(LinkedList *list);
+unsigned int LNLS_length(s_LinkedList *list);
+
+/*
+ * -- desc --
+ * Get next s_LinkedNode from the s_LinkedNode given
+ *
+ * -- param --
+ * @node - LinkedNode that will be used
+ *
+ * -- return --
+ * return the next node on success
+ * return NULL pointer on fail or there is no next node
+ * */
+s_LinkedNode *LNLS_next(s_LinkedNode *node);
+
+/*
+ * -- desc --
+ * Get prev s_LinkedNode from the s_LinkedNode given
+ *
+ * -- param --
+ * @node - LinkedNode that will be used
+ *
+ * -- return --
+ * return the prev node on success
+ * return NULL pointer on fail or there is no prev node
+ * */
+s_LinkedNode *LNLS_prev(s_LinkedNode *node);
+
+/*
+ * -- desc --
+ * Get value from s_LinkedNode
+ *
+ * -- param --
+ * @node - LinkedNode that will be used
+ *
+ * -- return --
+ *  return value of the node
+ * */
+u_GP LNLS_getValue(s_LinkedNode* node);
+
+/*
+ * -- desc --
+ * Get type of value from s_LinkedNode
+ *
+ * -- param --
+ * @node - LinkedNode that will be used
+ *
+ * -- return -- 
+ * return type of value that is stored in the node
+ * */
+e_GPT LNLS_getType(s_LinkedNode *node);
+
+/*
+ * -- desc --
+ * Insert s_LinkedNode at index given in a s_LinkedList, the index of inserted node = index given
+ *
+ * -- param --
+ * @list - LinkedList that will be used
+ * @new_node - node to be inserted
+ * @index - new node will be inserted at index given
+ *
+ * -- return --
+ * return true on success
+ * return false on fail
+ * */
+bool LNLS_insertNode(s_LinkedList *list, s_LinkedNode *new_node, unsigned int index);
+
+/*
+ * -- desc --
+ * Create a s_LinkedNode and insert it at index given in a s_LinkedList, the index of inserted node = index given
+ *
+ * -- param --
+ * @list - LinkedList that will be used
+ * @value - value that will be stored in the LinkedNode created
+ * @type - type of value that will be stored
+ * @index - new node will be inserted at index given
+ *
+ * -- return --
+ *  return true on success
+ *  return false on fail
+ * */
+bool LNLS_insert(s_LinkedList *list, u_GP value, e_GPT type, unsigned int index);
+
+/*
+ * -- desc --
+ * LNLS_insert but the s_LinkedNode created is inserted at the end of s_LinkedList
+ *
+ * -- param -- 
+ * @list - LinkedList that will be used
+ * @value - value that will be stored in the LinkedNode created
+ * @type - type of value that will be stored
+ *
+ * -- return --
+ *  return true on sucees
+ *  return false on fail
+ * */
+bool LNLS_append(s_LinkedList *list, u_GP value, e_GPT type);
+
+/*
+ * -- desc --
+ * Change value of a s_LinkedNode at index given in a s_LinkedList
+ *
+ * -- param --
+ * @list - LinkedList that will be used
+ * @value - new value that will be stored
+ * @type - type of the new value
+ * @index - the node that its value will change
+ *
+ * -- return --
+ *  return true on success
+ *  return false on fail
+ * */
+bool LNLS_changeValue(s_LinkedList *list, u_GP value, e_GPT type, unsigned int index);
+
+/*
+ * -- desc --
+ * Pop a s_LinkedNode at index given in a s_LinkedList
+ * (Take a `s_LinkedNode` out from the LinkedList and return it)
+ *
+ * -- param --
+ * @list - LinkedList that operation will be performed on
+ * @index - node at the index will be popped
+ *
+ * -- return --
+ * return the node at the index given on success
+ * return NULL pointer on fail
+ * */
+s_LinkedNode *LNLS_popNode(s_LinkedList *list, unsigned int index);
+
+/*
+ * -- desc --
+ * Free a s_LinkedNode at index given in a s_LinkedList
+ *
+ * -- param --
+ * @list - LinkedList that operation will be performed on
+ * @index - node at the index will be freed
+ *
+ * -- param --
+ * return true on success
+ * return false on fail
+ * */
+bool LNLS_freeNode(s_LinkedList *list, unsigned int index);
+
+/*
+ * -- desc --
+ * Free a s_LinkedNode which its value is same as value given for `count` amount of time.
+ * `count` <= 0 means no count constraint. it returns number of s_LinkedNode deleted. 
+ *
+ * -- param --
+ * @list - LinkedList that operation will be performed on 
+ * @value - node will same value will be freed (ignore the type)
+ * @count - how many node will be freed
+ *
+ * -- return --
+ * return number of node freed
+ * */
+unsigned int LNLS_freeValue(s_LinkedList *list, u_GP value, int count);
+
+/*
+ * -- desc --
+ * Free whole s_LinkedList
+ *
+ * -- param --
+ * @list - LinkedList that operation will be performed on
+ *
+ * -- return --
+ * return true on success
+ * return false on fail
+ *
+ * -- Note --
+ * be careful when you are trying to delete LinkedList contains pointer to heap memory, it
+ * might cause memory leak. This function only free the 
+ * s_LinkedNode and s_LinkedList and not the pointer in it
+ * */
+bool LNLS_free(s_LinkedList *list);
+
+/*
+ * -- desc --
+ * Print a s_LinkedList
+ *
+ * -- param -- 
+ * @list - LinkedList to be printed
+ *
+ * -- return --
+ * return nothing
+ * */
+void LNLS_print(s_LinkedList *list);
 
 #endif

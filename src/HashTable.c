@@ -9,6 +9,50 @@
 #define STR_MAX 100
 
 /*
+ *  * @key:
+ *      A `char *` (string). A key for key value pair.
+ *
+ * @value:
+ *      A `u_GP` (Generic Primitive, union, from u_GP.h). The value corresponding to a key
+ *
+ * @occupied:
+ *      A `bool`. Is the s_HashNode used
+ *
+ * @type:
+ *      A `e_GPT` (Generic Primitive Type, enum, from u_GP.h). type of value stored
+ *
+ * */
+typedef struct s_HashNode {
+	char *key;
+        u_GP value;
+        bool occupied;
+        e_GPT type;
+} s_HashNode;
+
+/* @size:
+ *      An `unsigned int`. The size of the array
+ *
+ * @length:
+ *      An `unsigned int`. number of elements occupied
+ *
+ * @keys:
+ *      A `s_LinkedList *` (struct, from s_LinkedList.h). list of keys used
+ *
+ * @hash_seed:
+ *      A `unsigned int`. An integer to generate hash (prefer prime number)
+ *
+ * @nodes:
+ *      A `s_HashNode *` (struct, from s_HashTable.h). A pointer that point to an array of `s_HashNode` stored in heap
+ * */
+typedef struct s_HashTable {
+        unsigned int size;
+        unsigned int length;
+        s_LinkedList *keys;
+        unsigned int hash_seed;
+        s_HashNode *nodes;
+} s_HashTable;
+
+/*
  * Returns integer between 0-`max` that corresponds to `key` and `hash_seed` given
  * */
 unsigned int hash(char *key, unsigned int max, unsigned int hash_seed)
@@ -21,34 +65,44 @@ unsigned int hash(char *key, unsigned int max, unsigned int hash_seed)
 }
 
 /*
- * Create HashTable
+ * Create s_HashTable
  * */
-HashTable *HT_create(unsigned int size, unsigned int hash_seed)
+s_HashTable *HSTB_create(unsigned int size, unsigned int hash_seed)
 {
-	HashTable *table = (HashTable *)malloc(sizeof(HashTable));
+	s_HashTable *table = (s_HashTable *)malloc(sizeof(s_HashTable));
+	if(table == NULL) return NULL;
 	table->size = size;
 	table->length = 0;
 	table->hash_seed = hash_seed;
-	table->keys = LL_create();
+	table->keys = LNLS_create();
+	if(table->keys == NULL) {
+		free(table);
+		return NULL;
+	}
 
-	HashNode *nodes = (HashNode *)calloc(size, sizeof(HashNode));
+	s_HashNode *nodes = (s_HashNode *)calloc(size, sizeof(s_HashNode));
+	if(nodes == NULL) {
+		LNLS_free(table->keys);
+		free(table);
+		return NULL;
+	}
 	table->nodes = nodes;
 
 	return table;
 }
 
 /*
- * Resize HashTable
+ * Resize s_HashTable
  * */
-bool HT_resize(HashTable *table, unsigned int size)
+bool HSTB_resize(s_HashTable *table, unsigned int size)
 {
-	HashNode *new_nodes = (HashNode *)calloc(size, sizeof(HashNode));
+	s_HashNode *new_nodes = (s_HashNode *)calloc(size, sizeof(s_HashNode));
 
 	// remap
-	LinkedNode *key = table->keys->node;
-	for(unsigned int i = 0; i < table->keys->length; i++) {
-		new_nodes[hash(key->value.STR, size, table->hash_seed)] = table->nodes[hash(key->value.STR, table->size, table->hash_seed)];
-		key = key->next;
+	s_LinkedNode *key = LNLS_getNode(table->keys, 0);
+	for(unsigned int i = 0; i < LNLS_length(table->keys); i++) {
+		new_nodes[hash(LNLS_getValue(key).STR, size, table->hash_seed)] = table->nodes[hash(LNLS_getValue(key).STR, table->size, table->hash_seed)];
+		key = LNLS_next(key);
 	}
 
 	// update table state
@@ -60,13 +114,13 @@ bool HT_resize(HashTable *table, unsigned int size)
 }
 
 /*
- * Free HashTable
+ * Free s_HashTable
  * */
-bool HT_free(HashTable *table)
+bool HSTB_free(s_HashTable *table)
 {
-	// free all HashNode
+	// free all s_HashNode
 	free(table->nodes);
-	LL_free(table->keys);
+	LNLS_free(table->keys);
 	free(table);
 	return true;
 }
@@ -74,7 +128,7 @@ bool HT_free(HashTable *table)
 /*
  * Assign value to node
  * */
-static void assign_to_node(HashNode *node, char *key, GP value, GPT type)
+static void assign_to_node(s_HashNode *node, char *key, u_GP value, e_GPT type)
 {
 	node->key = key;
 	node->value = value;
@@ -83,28 +137,28 @@ static void assign_to_node(HashNode *node, char *key, GP value, GPT type)
 }
 
 /*
- * Add key value pair to HashTable
+ * Add key value pair to s_HashTable
  * */
-bool HT_add(HashTable *table, char *key, GP value, GPT type)
+bool HSTB_add(s_HashTable *table, char *key, u_GP value, e_GPT type)
 {
-	HashNode *node = &table->nodes[hash(key, table->size, table->hash_seed)];
+	s_HashNode *node = &table->nodes[hash(key, table->size, table->hash_seed)];
 	if(node->occupied || strlen(key) > STR_MAX) return false;
 
 	// Assign value to node
 	assign_to_node(node, key, value, type);
 
 	// update table state
-	LL_insert(table->keys, (GP) key, STR, table->keys->length);
+	LNLS_insert(table->keys, (u_GP) key, GPT_STR, LNLS_length(table->keys));
 	table->length += 1;
 	return true;
 }
 
 /*
- * Change value in HashTable
+ * Change value in s_HashTable
  * */
-bool HT_changeValue(HashTable *table, char *key, GP value, GPT type)
+bool HSTB_changeValue(s_HashTable *table, char *key, u_GP value, e_GPT type)
 {
-	HashNode *node = &table->nodes[hash(key, table->size, table->hash_seed)];
+	s_HashNode *node = &table->nodes[hash(key, table->size, table->hash_seed)];
 	if(!node->occupied) return false;
 
 	// Assign value to node
@@ -113,47 +167,47 @@ bool HT_changeValue(HashTable *table, char *key, GP value, GPT type)
 	return true;
 }
 
-bool HT_remove(HashTable *table, char *key)
+bool HSTB_remove(s_HashTable *table, char *key)
 {
-	HashNode *node = &table->nodes[hash(key, table->size, table->hash_seed)];
+	s_HashNode *node = &table->nodes[hash(key, table->size, table->hash_seed)];
 	if(!node->occupied) return false;
 	
 	// update table state
-	LL_freeValue(table->keys, (GP) key);
+	LNLS_freeValue(table->keys, (u_GP) key, 1);
 	table->length -= 1;
 
-	// just make it available for HT_add
+	// just make it available for HSTB_add
 	node->occupied = false;
 
 	return true;
 }
 
 /*
- * get value from key in HashTable
+ * get value from key in s_HashTable
  * */
-GP HT_get(HashTable *table, char *key){
-	HashNode node = table->nodes[hash(key, table->size, table->hash_seed)];
-	return node.occupied ? node.value : (GP) NULL;
+u_GP HSTB_get(s_HashTable *table, char *key){
+	s_HashNode node = table->nodes[hash(key, table->size, table->hash_seed)];
+	return node.occupied ? node.value : (u_GP) NULL;
 }
 
 /*
- * Print HashTable
+ * Print s_HashTable
  * */
-void HT_print(HashTable *table)
+void HSTB_print(s_HashTable *table)
 {
-	printf("HashTable:\n");
+	printf("s_HashTable:\n");
 	for(unsigned int i = 0; i < table->length; i ++){
-		char *key = LL_getNode(table->keys, i)->value.STR;
-		HashNode *node = &table->nodes[hash(key, table->size, table->hash_seed)];
-		if(node->type == PTR)
+		char *key = LNLS_getValue(LNLS_getNode(table->keys, i)).STR;
+		s_HashNode *node = &table->nodes[hash(key, table->size, table->hash_seed)];
+		if(node->type == GPT_PTR)
 			printf("\t%20s = %-20p (pointer)\n", key, node->value.PTR);
-		else if (node->type == INT)
+		else if (node->type == GPT_INT)
 			printf("\t%20s = %-20i (integer)\n", key, node->value.INT);
-		else if (node->type == STR)
+		else if (node->type == GPT_STR)
 			printf("\t%20s = %-20s (string)\n", key, node->value.STR);
-		else if (node->type == DBL)
+		else if (node->type == GPT_DBL)
 			printf("\t%20s = %-20f (double)\n", key, node->value.DBL);
-		else if (node->type == CHAR)
+		else if (node->type == GPT_CHAR)
 			printf("\t%20s = %-20c (character)\n", key, node->value.CHAR);
 	}
 	printf("Length of Table: %u, Size of Table: %u\n", table->length, table->size);
