@@ -1,4 +1,4 @@
-bin/
-dpn/
-obj/
-lib/
+bin/*
+dpn/*
+obj/*
+lib/*

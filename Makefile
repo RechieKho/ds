@@ -10,7 +10,6 @@ LIBDIR=lib
 SRC=$(wildcard $(SRCDIR)/*.c)
 OBJS=$(patsubst $(SRCDIR)/%.c, $(OBJDIR)/%.o, $(SRC))
 BIN=$(BINDIR)/main
-INCLUDE_LIB_DIR=$(LIBDIR)/include
 LINUX_SO_LIB=$(LIBDIR)/libds.so
 LINUX_A_LIB=$(LIBDIR)/libds.a
 
@@ -19,27 +18,15 @@ DPNDIR=dpn
 DPN_o=$(patsubst $(SRCDIR)/%.c, $(DPNDIR)/D-%.o, $(SRC))
 
 # user's command
-test: setup $(BIN)
+test: $(BIN)
 
 # optimized test (with -O flag)
 Otest: CFLAGS=-Wall -O2 -DNDEBUG
 Otest: test
 
-shared: setup $(LINUX_SO_LIB) $(INCLUDE_LIB_DIR)
+shared: $(LINUX_SO_LIB)
 
-archive: setup $(LINUX_A_LIB) $(INCLUDE_LIB_DIR)
-
-# setup
-setup: $(DPNDIR) $(OBJDIR) $(OBJDIR)
-
-$(DPNDIR): 
-	mkdir $(DPNDIR)
-
-$(BINDIR): 
-	mkdir $(BINDIR)
-
-$(OBJDIR): 
-	mkdir $(OBJDIR)
+archive: $(LINUX_A_LIB) 
 
 # make binary from object
 $(BIN):  $(OBJS)
@@ -57,17 +44,14 @@ release: CFLAGS=-Wall -O2 -DNDEBUG
 release: clean
 
 # Compile to LIBs
-$(LINUX_SO_LIB): GP.h HashTable.c HashTable.h LinkedList.c LinkedList.h
-	$(CC) $(CFLAGS) -fPIC -shared -o $@ HashTable.c LinkedList.c 
+$(LINUX_SO_LIB): $(SRCDIR)/GP.h $(SRCDIR)/HashTable.c $(SRCDIR)/HashTable.h $(SRCDIR)/LinkedList.c $(SRCDIR)/LinkedList.h
+	$(CC) $(CFLAGS) -fPIC -shared -o $@ $(SRCDIR)/HashTable.c $(SRCDIR)/LinkedList.c 
 
-$(LINUX_A_LIB): HashTable.o LinkedList.o
-	ar rcs $(LINUX_A_LIB) HashTable.o LinkedList.o
+$(LINUX_A_LIB): $(SRCDIR)/HashTable.o $(SRCDIR)/LinkedList.o
+	ar rcs $(LINUX_A_LIB) $(SRCDIR)/HashTable.o $(SRCDIR)/LinkedList.o
 # r - replace archive; c - create archive; s - index;
 
-$(INCLUDE_LIB_DIR): 
-	cp src/*.h lib/
-
 clean: 
-	rm -rf $(BINDIR)/* $(OBJDIR)/* $(DPNDIR)/*
+	rm -rf $(BINDIR)/* $(OBJDIR)/* $(DPNDIR)/* $(LIBDIR)/*.so $(LIBDIR)/*.a 
 
 
