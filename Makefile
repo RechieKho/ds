@@ -13,8 +13,21 @@ BIN=$(BINDIR)/main
 DPNDIR=dpn
 DPN=$(patsubst $(SRCDIR)/%.c, $(DPNDIR)/D-%, $(SRC))
 
-all: $(BIN)
+all: setup $(BIN)
 
+# setup
+setup: $(DPNDIR) $(OBJDIR) $(OBJDIR)
+
+$(DPNDIR): 
+	mkdir $(DPNDIR)
+
+$(BINDIR): 
+	mkdir $(BINDIR)
+
+$(OBJDIR): 
+	mkdir $(OBJDIR)
+
+# make binary from object
 $(BIN):  $(OBJS)
 	$(CC) $(CFLAGS) $(OBJS) -o $@
 
