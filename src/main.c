@@ -10,7 +10,7 @@ int main()
 	printf("Testing HashTable.c\n");
 
 	s_HashTable *table = HSTB_create(100, 13);
-	HSTB_add(table, "Chou Chen Jun", (u_GP) "Hellow World", GPT_PTR);
+	HSTB_add(table, "Cinamon", (u_GP) "Hellow World", GPT_PTR);
 	HSTB_add(table, "Testor", (u_GP) 45, GPT_INT);
 	HSTB_add(table, "Testoring", (u_GP) "Hellow Worlds", GPT_STR);
 	HSTB_add(table, "GeniusIsBorn", (u_GP) 'N', GPT_CHAR);
@@ -21,12 +21,12 @@ int main()
 
 	printf("using 'Testoring' as key: %s\n", HSTB_get(table, "Testoring").STR);
 	printf("using 'Testor' as key: %i\n", HSTB_get(table, "Testor").INT);
-	printf("using 'Chou Chen Jun' as key: %p\n", HSTB_get(table, "Chou Chen Jun").PTR);
+	printf("using 'Cinamon' as key: %p\n", HSTB_get(table, "Cinamon").PTR);
 	
 	printf("\n");
 
 	printf("Remove \"Chou Chen Jun\" and \"Testor\"\n");
-	HSTB_remove(table, "Chou Chen Jun");
+	HSTB_remove(table, "Cinamon");
 	HSTB_remove(table, "Testor");
 	HSTB_print(table);
 

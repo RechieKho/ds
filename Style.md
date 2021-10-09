@@ -26,7 +26,7 @@ Rules:
 
 ## Headers
 Basic rules:
-1. Header guard's variable should be the file's name converted to `UPPER_SNAKE_CASE` (example: `HashTable.c` -> `_HASHTABLE_H_`, `LinkedList.c` -> `_LINKEDLIST_H_`). 
+1. Header guard's variable should be the file's name converted to `UPPER_SNAKE_CASE` (example: `HashTable.h` -> `_HASHTABLE_H_`, `LinkedList.h` -> `_LINKEDLIST_H_`). 
 2. `include` statement for including header files must be at the top of the file (after header guard)
 3. When including header files, `include` statments for `<>` and `""` is separated by one empty row. `include` statments for `<>` come first. 
 4. After `include` statments, description of the header file must be written as multiline comment. 
@@ -50,8 +50,7 @@ Rules for declaration of `enum`:
 4. The values' name is in `cammelCase`.
 
 Rules for function declarations:
-1. The function's name must have shortened current filename as it prefix. The function name and the prefix is separated with an underscore. 
-**HOW TO SHORTEN A NAME**: Remove all the vowels, pick first two letter of each word, then make it all capitalized. (For an example: `HashTable` -> `HSTB`). 
+1. The function's name must have shortened ([checkout](#shorten-a-name) how to shorten a name) current filename as it prefix. The function name and the prefix is separated with an underscore. 
 2. The function's name is in `cammelCase`. 
 3. Description for parameters and returned value must be written above the function declaration as a multiline comment. 
 
@@ -63,8 +62,7 @@ Basic rules:
 
 Rules for function implementation:
 1. The function name and the prefix is separated with an underscore. 
-2. The normal function's name (not static functions) must have shortened current filename as its prefix.
-**HOW TO SHORTEN A NAME**: Remove all the vowels, pick first two letter of each word, then make it all capitalized. (For an example: `HashTable` -> `HSTB`). 
+2. The normal function's name (not static functions) must have shortened ([checkout](#shorten-a-name) how to shorten a name)current filename as its prefix.
 3. Static functions takes `T` as its prefix. 
 4. Static functions must come before normal functions. 
 5. The function's name is in `cammelCase`. 
@@ -75,3 +73,8 @@ Rules for function implementation:
 Rules for implementation of `struct`:
 3. Description of each property of a `struct` must be written above the implementation as multiline comment. 
 4. Names of properties are in `snake_case`. 
+
+## Misc
+1. <p id="shorten-a-name">How to shorten a name</p> 
+    Remove all the vowels, pick first two letter of each word, then make it all capitalized. (For an example: `HashTable` -> `HSTB`). 
+
