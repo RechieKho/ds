@@ -16,6 +16,9 @@
  * And so, the unique integer must in between 0 to the size of the array. This causes the possibility that
  * a two different string might produce same integer and cause two different string uses same slot in the array.
  * The only way to  minimize the possibility of getting same integer is to increase the size of an array.
+ *
+ * -- Important Note --
+ * The `HSTB_free` function only free structure, remember to free pointers stored in the HashTable. 
  * */
 
 typedef struct s_HashNode s_HashNode;

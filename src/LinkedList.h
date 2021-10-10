@@ -14,6 +14,9 @@
  *
  * `s_LinkedList` is basically bunch of `s_LinkedNode` linked together using pointer.
  * It this approach makes adding and removing stuff orderly easier compared to an array.
+ *
+ * -- Important Note --
+ * The `LNLS_free` function only free structure, remember to free pointers stored in the LinkedList. 
  * */
 
 typedef struct s_LinkedNode s_LinkedNode;
