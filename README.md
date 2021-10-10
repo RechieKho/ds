@@ -12,4 +12,4 @@ This project is developed in Linux environment (Gentoo).
 All naming convention are specified in [`Style.md`](Style.md). The documentation of each function are written in header files. 
 
 ## Trying out
-Make sure the [dependency](#dependency) is fulfilled. Git clone this repo (`git clone https://github.com/RechieKho/ds.git`). Run `make`. The binary will be output in the `bin/` directory. Edit the `src/main.c` and try out the `HashTable` and `LinkedList`. 
+Make sure the [dependency](#dependency) is fulfilled. Git clone this repo (`git clone https://github.com/RechieKho/ds.git`). Run `make`. The binary will be output in the `bin/` directory. Edit the `src/main.c` and try out the `HashTable` and `LinkedList`. Most of the time, you do not need to worry about the header dependency as the `Makefile` will calculate the depencency for you (with the help of `gcc` compiler). 

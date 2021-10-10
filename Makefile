@@ -1,73 +1,84 @@
 # -- Makefile --
 
+# -- variable --
 CC=gcc
 CFLAGS=-Wextra -Wall -std=c11 -g
+## DIR ##
+SRCDIR:=src
+OBJDIR:=obj
+BINDIR:=bin
+LIBDIR:=lib
+DEPDIR:=dep
+INCLUDE:=$(LIBDIR)/include
+## FILES ##
+SRCS:=$(wildcard $(SRCDIR)/*.c)
+OBJS:=$(patsubst $(SRCDIR)/%.c, $(OBJDIR)/%.o, $(SRCS))
+BIN:=$(BINDIR)/main
+LINUX_SO_LIB:=$(LIBDIR)/libds.so
+LINUX_A_LIB:=$(LIBDIR)/libds.a
 
-SRCDIR=src
-OBJDIR=obj
-BINDIR=bin
-LIBDIR=lib
-SRC=$(wildcard $(SRCDIR)/*.c)
-OBJS=$(patsubst $(SRCDIR)/%.c, $(OBJDIR)/%.o, $(SRC))
-BIN=$(BINDIR)/main
-INCLUDE_LIB_DIR=$(LIBDIR)/include
-LINUX_SO_LIB=$(LIBDIR)/libds.so
-LINUX_A_LIB=$(LIBDIR)/libds.a
+OBJDEP:=$(patsubst $(OBJDIR)/%.o, $(DEPDIR)/a-%.o.d, $(OBJS))
 
+# -- user's command --
+test: pre $(BIN)
+Otest: pre release $(BIN)
+shared: pre release $(LINUX_SO_LIB) cp_headers
+archive: pre release $(LINUX_A_LIB) cp_headers
+depend: pre rm_depend $(OBJDEP)
 
-DPNDIR=dpn
-DPN_o=$(patsubst $(SRCDIR)/%.c, $(DPNDIR)/D-%.o, $(SRC))
+# -- pre & post --
+pre: setup_dir
 
-# user's command
-test: setup $(BIN)
-
-# optimized test (with -O flag)
-Otest: CFLAGS=-Wall -O2 -DNDEBUG
-Otest: test
-
-shared: setup $(LINUX_SO_LIB) $(INCLUDE_LIB_DIR)
-
-archive: setup $(LINUX_A_LIB) $(INCLUDE_LIB_DIR)
-
-# setup
-setup: $(DPNDIR) $(OBJDIR) $(OBJDIR)
-
-$(DPNDIR): 
-	mkdir $(DPNDIR)
-
-$(BINDIR): 
-	mkdir $(BINDIR)
-
-$(OBJDIR): 
-	mkdir $(OBJDIR)
-
-# make binary from object
-$(BIN):  $(OBJS)
-	$(CC) $(CFLAGS) $(OBJS) -o $@
-
-# get dependency and generate recipe for obj
-$(DPNDIR)/D-%.o: $(SRCDIR)/%.c
-	$(CC) $(CFLAGS) -MT '$(patsubst $(SRCDIR)/%.c, $(OBJDIR)/%.o, $<)' -MM $< > $@
-	echo '	$(CC) $(CFLAGS) -c $< -o $$@' >> $@
-
-include $(DPN_o)
-
+# -- mode --
 # release
 release: CFLAGS=-Wall -O2 -DNDEBUG
 release: clean
 
-# Compile to LIBs
-$(LINUX_SO_LIB): GP.h HashTable.c HashTable.h LinkedList.c LinkedList.h
-	$(CC) $(CFLAGS) -fPIC -shared -o $@ HashTable.c LinkedList.c 
+# -- procedure --
+setup_dir: $(OBJDIR) $(BINDIR) $(LIBDIR) $(INCLUDE)
 
-$(LINUX_A_LIB): HashTable.o LinkedList.o
-	ar rcs $(LINUX_A_LIB) HashTable.o LinkedList.o
-# r - replace archive; c - create archive; s - index;
+cp_headers: 
+	cp $(SRCDIR)/*.h $(INCLUDE)
 
-$(INCLUDE_LIB_DIR): 
-	cp src/*.h lib/
+rm_depend:
+	rm $(DEPDIR)/* -rf
 
 clean: 
-	rm -rf $(BINDIR)/* $(OBJDIR)/* $(DPNDIR)/*
+	rm -rf $(BINDIR)/* $(OBJDIR)/* $(LIBDIR)/*.so $(LIBDIR)/*.a $(INCLUDE)/*
 
+clear: clean rm_depend
 
+# -- make recipies --
+## DIR ##
+$(BINDIR): 
+	mkdir $@
+
+$(OBJDIR): 
+	mkdir $@
+
+$(LIBDIR): 
+	mkdir $@
+
+$(INCLUDE):
+	mkdir $@
+
+## BINARY ##
+$(BIN): $(OBJS)
+	$(CC) $(CFLAGS) $^ -o $@
+
+## LIBRARY ##
+$(LINUX_SO_LIB): $(OBJS)
+	$(CC) $(CFLAGS) $^ -fPIC -shared -o $@ 
+
+$(LINUX_A_LIB): $(OBJS)
+	ar rcs $@ $^
+# r - replace archive; c - create archive; s - index;
+
+## DEPENDENCY ##
+$(DEPDIR)/a-%.o.d: $(SRCDIR)/%.c
+	mkdir -p $(DEPDIR)
+	gcc $< -MM -MF $@ -MT $(patsubst $(SRCDIR)/%.c, $(OBJDIR)/%.o, $<)
+	echo '	$(CC) $(CFLAGS) -c $< -o $(patsubst $(SRCDIR)/%.c, $(OBJDIR)/%.o, $<)' >> $@
+
+# -- include --
+include $(OBJDEP)
