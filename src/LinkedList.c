@@ -287,8 +287,8 @@ void LNLS_print(s_LinkedList *list)
 	for (unsigned int i = 0; i< list->length; i++) {
 		if(node->type == GPT_DBL) printf("%f", node->value.DBL);
 		else if(node->type == GPT_INT) printf("%i", node->value.INT);
-		else if(node->type == GPT_CHAR) printf("%c", node->value.CHAR);
-		else if(node->type == GPT_STR) printf("%s", node->value.STR);
+		else if(node->type == GPT_CHAR) printf("'%c'", node->value.CHAR);
+		else if(node->type == GPT_STR) printf("\"%s\"", node->value.STR);
 		else if(node->type == GPT_PTR) printf("%p", node->value.PTR);
 		if(i+1<list->length) printf(", ");
 		node = node->next;

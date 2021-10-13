@@ -10,9 +10,9 @@ int main()
 	printf("Testing HashTable.c\n");
 
 	s_HashTable *table = HSTB_create(100, 13);
-	HSTB_add(table, "Cinamon", (u_GP) "Hellow World", GPT_PTR);
+	HSTB_add(table, "Cinamon", (u_GP) "Hello worldys", GPT_PTR);
 	HSTB_add(table, "Testor", (u_GP) 45, GPT_INT);
-	HSTB_add(table, "Testoring", (u_GP) "Hellow Worlds", GPT_STR);
+	HSTB_add(table, "Testoring", (u_GP) "lolas", GPT_STR);
 	HSTB_add(table, "GeniusIsBorn", (u_GP) 'N', GPT_CHAR);
 
 	HSTB_print(table);

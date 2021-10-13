@@ -6,7 +6,7 @@
 #include "LinkedList.h"
 #include "GP.h"
 
-#define STR_MAX 100
+#define MAX_KEY_LEN 100
 
 /*
  *  * @key:
@@ -142,7 +142,7 @@ static void assign_to_node(s_HashNode *node, char *key, u_GP value, e_GPT type)
 bool HSTB_add(s_HashTable *table, char *key, u_GP value, e_GPT type)
 {
 	s_HashNode *node = &table->nodes[hash(key, table->size, table->hash_seed)];
-	if(node->occupied || strlen(key) > STR_MAX) return false;
+	if(node->occupied || strlen(key) > MAX_KEY_LEN) return false;
 
 	// Assign value to node
 	assign_to_node(node, key, value, type);
@@ -204,11 +204,11 @@ void HSTB_print(s_HashTable *table)
 		else if (node->type == GPT_INT)
 			printf("\t%20s = %-20i (integer)\n", key, node->value.INT);
 		else if (node->type == GPT_STR)
-			printf("\t%20s = %-20s (string)\n", key, node->value.STR);
+			printf("\t%20s = \"%-20s\" (string)\n", key, node->value.STR);
 		else if (node->type == GPT_DBL)
 			printf("\t%20s = %-20f (double)\n", key, node->value.DBL);
 		else if (node->type == GPT_CHAR)
-			printf("\t%20s = %-20c (character)\n", key, node->value.CHAR);
+			printf("\t%20s = \'%-20c\' (character)\n", key, node->value.CHAR);
 	}
 	printf("Length of Table: %u, Size of Table: %u\n", table->length, table->size);
 }
