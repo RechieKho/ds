@@ -45,7 +45,19 @@ s_LinkedNode *LNLS_createNode(u_GP value, e_GPT type);
  * return a `s_LinkedList` on success
  * return a NULL pointer on fail
  * */
-s_LinkedList *LNLS_create();
+s_LinkedList *LNLS_createList();
+
+/**
+ * -- desc --
+ * create an array of s_LinkedList
+ * 
+ * -- param --
+ * @count - the size of the array
+ * 
+ * -- return --
+ * returns a pointer to the array of lists
+*/
+s_LinkedList **LNLS_createLists(unsigned int count);
 
 /*
  * -- desc --
@@ -185,6 +197,21 @@ bool LNLS_append(s_LinkedList *list, u_GP value, e_GPT type);
 
 /*
  * -- desc --
+ * LNLS_insert but the s_LinkedNode created is inserted at the begining of s_LinkedList
+ *
+ * -- param -- 
+ * @list - LinkedList that will be used
+ * @value - value that will be stored in the LinkedNode created
+ * @type - type of value that will be stored
+ *
+ * -- return --
+ *  return true on sucees
+ *  return false on fail
+ * */
+bool LNLS_preppend(s_LinkedList *list, u_GP value, e_GPT type);
+
+/*
+ * -- desc --
  * Change value of a s_LinkedNode at index given in a s_LinkedList
  *
  * -- param --
@@ -251,15 +278,31 @@ unsigned int LNLS_freeValue(s_LinkedList *list, u_GP value, int count);
  * @list - LinkedList that operation will be performed on
  *
  * -- return --
- * return true on success
- * return false on fail
- *
+ * return nothing
+ * 
  * -- Note --
  * be careful when you are trying to delete LinkedList contains pointer to heap memory, it
  * might cause memory leak. This function only free the 
  * s_LinkedNode and s_LinkedList and not the pointer in it
  * */
-bool LNLS_free(s_LinkedList *list);
+void LNLS_freeList(s_LinkedList *list);
+
+/*
+ * -- desc --
+ * Free whole array of s_LinkedList
+ * 
+ * -- param --
+ * @lists - array of LinkedList that will be freed
+ * 
+ * -- return --
+ * return nothing
+ * 
+ * -- Note --
+ * be careful when you are trying to delete LinkedList contains pointer to heap memory, it
+ * might cause memory leak. This function only free the 
+ * s_LinkedNode and s_LinkedList and not the pointer in it
+ */
+void LNLS_freeLists(s_LinkedList **lists);
 
 /*
  * -- desc --

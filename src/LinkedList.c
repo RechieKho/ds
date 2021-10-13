@@ -11,17 +11,21 @@
  *
  * @type:
  *      A e_GPT (Generic Primitive Type, enum, from u_GP.h). type of @value.
+ * 
+ * @is_in_list:
+ * 		A boolean. true if the node is in a s_LinkedList
  *
  * @next:
- *      A `s_LinkedNode *`. stores the next s_LinkedList.
+ *      A `s_LinkedNode *`. stores the next s_LinkedNode.
  *
  * @prev:
- *      A `s_LinkedNode *`. stores the previous s_LinkedList
+ *      A `s_LinkedNode *`. stores the previous s_LinkedNode. 
  *
  * */
 typedef struct s_LinkedNode{
-        u_GP value;
+    u_GP value;
 	e_GPT type;
+	bool is_in_list;
 	struct s_LinkedNode *next;
 	struct s_LinkedNode *prev;
 } s_LinkedNode;
@@ -34,10 +38,12 @@ typedef struct s_LinkedNode{
  *      An `unsigned int`. records the length of the `s_LinkedList`
  * */
 typedef struct s_LinkedList {
-        s_LinkedNode *first_node;
+    s_LinkedNode *first_node;
 	s_LinkedNode *last_node;
-        unsigned int length;
+    unsigned int length;
 } s_LinkedList;
+
+// -- Functions --
 
 s_LinkedNode *LNLS_createNode(u_GP value, e_GPT type)
 {
@@ -45,16 +51,36 @@ s_LinkedNode *LNLS_createNode(u_GP value, e_GPT type)
 	if(node != NULL) {
 		node->value = value;
 		node->type = type;
+		node->is_in_list = false;
 	}
 	return node;
 }
 
-s_LinkedList *LNLS_create()
+s_LinkedList *LNLS_createList()
 {
 	s_LinkedList *list = (s_LinkedList *) malloc(sizeof(s_LinkedList));
 	if(list != NULL)list->length = 0;
 	return list;
 }
+
+s_LinkedList **LNLS_createLists(unsigned int count)
+{
+	s_LinkedList **lists = (s_LinkedList **) calloc(count, sizeof(s_LinkedList *));
+	for(unsigned int i = 0; i < count; i++) {
+		s_LinkedList *list = LNLS_createList();
+
+		// free everything and return NULL if fail to allocate
+		if(list == NULL) {
+			for (unsigned int j = 0; j < count; j++)
+				if(lists[j] != NULL) free(lists[j]);
+			return NULL;
+		}	
+
+		lists[i] = list;
+	}
+	return lists;
+}
+
 
 bool LNLS_isIndexValid(s_LinkedList *list, unsigned int index)
 {
@@ -105,7 +131,7 @@ e_GPT LNLS_getType(s_LinkedNode *node)
 
 bool LNLS_insertNode(s_LinkedList *list, s_LinkedNode *new_node, unsigned int index)
 {
-	if(index > list->length) return false;
+	if(LNLS_isIndexValid(list, index) || new_node->is_in_list) return false;
 	
 	if(list->length == 0) {
 		list->first_node = new_node;
@@ -139,6 +165,7 @@ bool LNLS_insertNode(s_LinkedList *list, s_LinkedNode *new_node, unsigned int in
 		next->prev = new_node;
 	}
 	list->length += 1;
+	new_node->is_in_list = true;
 	return true;
 }
 
@@ -159,6 +186,15 @@ bool LNLS_append(s_LinkedList *list, u_GP value, e_GPT type)
 			list->length);
 }
 
+bool LNLS_preppend(s_LinkedList *list, u_GP value, e_GPT type)
+{
+	return LNLS_insert(
+			list, 
+			value,
+			type,
+			0);
+}
+
 bool LNLS_changeValue(s_LinkedList *list, u_GP value, e_GPT type, unsigned int index)
 {
 	if(!LNLS_isIndexValid(list, index)) return false;
@@ -170,7 +206,7 @@ bool LNLS_changeValue(s_LinkedList *list, u_GP value, e_GPT type, unsigned int i
 
 s_LinkedNode *LNLS_popNode(s_LinkedList *list, unsigned int index)
 {
-	if(list->length == 0 && !LNLS_isIndexValid(list, index)) return NULL;
+	if(!LNLS_isIndexValid(list, index)) return NULL;
 
 	s_LinkedNode *popped = LNLS_getNode(list, index);
 	if(index == 0){
@@ -191,14 +227,15 @@ s_LinkedNode *LNLS_popNode(s_LinkedList *list, unsigned int index)
 	}
 	popped->next = NULL;
 	popped->prev = NULL;
+	popped->is_in_list = false;
 	list->length -= 1;
 	return popped;
 }
 
 bool LNLS_freeNode(s_LinkedList *list, unsigned int index)
 {
-	if(list->length == 0 && !LNLS_isIndexValid(list, index)) return false;
 	s_LinkedNode *popped = LNLS_popNode(list, index);
+	if(popped == NULL) return false;
 	free(popped);
 	return true;
 }
@@ -223,7 +260,7 @@ unsigned int LNLS_freeValue(s_LinkedList *list, u_GP value, int count)
 	return deleted_count;
 }
 
-bool LNLS_free(s_LinkedList *list)
+void LNLS_freeList(s_LinkedList *list)
 {
 	s_LinkedNode *node = list->first_node;
 	for(unsigned int i = 0; i < list->length; i++){
@@ -232,7 +269,15 @@ bool LNLS_free(s_LinkedList *list)
 		node = next;
 	}
 	free(list);
-	return true;
+}
+
+void LNLS_freeLists(s_LinkedList **lists)
+{
+	unsigned int count = sizeof(lists) / sizeof(lists[0]);
+	for(unsigned int i = 0; i < count; i++) {
+		LNLS_freeList(lists[i]);
+	}
+	free(lists);
 }
 
 void LNLS_print(s_LinkedList *list)
