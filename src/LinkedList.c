@@ -5,6 +5,9 @@
 #include "LinkedList.h"
 #include "GP.h"
 
+
+
+// ### data types ###
 /*
  * @value:
  *      A u_GP (Generic Primitive, union, from u_GP.h). stores value.
@@ -43,8 +46,10 @@ typedef struct s_LinkedList {
     unsigned int length;
 } s_LinkedList;
 
-// -- Functions --
 
+
+// ### Functions ###
+// ## creation ##
 s_LinkedNode *LNLS_createNode(u_GP value, e_GPT type)
 {
 	s_LinkedNode *node = (s_LinkedNode *) malloc(sizeof(s_LinkedNode));
@@ -82,6 +87,8 @@ s_LinkedList **LNLS_createLists(unsigned int count)
 }
 
 
+
+// ## getter ##
 bool LNLS_isIndexValid(s_LinkedList *list, unsigned int index)
 {
 	return index < list->length;
@@ -129,9 +136,12 @@ e_GPT LNLS_getType(s_LinkedNode *node)
 	return node != NULL? node->type : GPT_NULL;
 }
 
+
+
+// ## manipulator ##
 bool LNLS_insertNode(s_LinkedList *list, s_LinkedNode *new_node, unsigned int index)
 {
-	if(LNLS_isIndexValid(list, index) || new_node->is_in_list) return false;
+	if(index > list->length || new_node->is_in_list) return false;
 	
 	if(list->length == 0) {
 		list->first_node = new_node;
@@ -232,6 +242,9 @@ s_LinkedNode *LNLS_popNode(s_LinkedList *list, unsigned int index)
 	return popped;
 }
 
+
+
+// ## free ##
 bool LNLS_freeNode(s_LinkedList *list, unsigned int index)
 {
 	s_LinkedNode *popped = LNLS_popNode(list, index);
@@ -271,15 +284,17 @@ void LNLS_freeList(s_LinkedList *list)
 	free(list);
 }
 
-void LNLS_freeLists(s_LinkedList **lists)
+void LNLS_freeLists(s_LinkedList **lists, size_t length)
 {
-	unsigned int count = sizeof(lists) / sizeof(lists[0]);
-	for(unsigned int i = 0; i < count; i++) {
+	for(unsigned int i = 0; i < length; i++) {
 		LNLS_freeList(lists[i]);
 	}
 	free(lists);
 }
 
+
+
+// ## print ##
 void LNLS_print(s_LinkedList *list)
 {
 	s_LinkedNode *node = list->first_node;

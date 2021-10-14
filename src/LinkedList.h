@@ -305,7 +305,7 @@ void LNLS_freeList(s_LinkedList *list);
  * might cause memory leak. This function only free the 
  * s_LinkedNode and s_LinkedList and not the pointer in it
  */
-void LNLS_freeLists(s_LinkedList **lists);
+void LNLS_freeLists(s_LinkedList **lists, size_t length);
 
 /*
  * -- desc --
