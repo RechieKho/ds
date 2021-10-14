@@ -21,9 +21,18 @@
  * The `HSTB_free` function only free structure, remember to free pointers stored in the HashTable. 
  * */
 
+
+
+// ### data types ###
+
 typedef struct s_HashNode s_HashNode;
 
 typedef struct s_HashTable s_HashTable;
+
+
+
+// ### function ###
+// ## creation ##
 
 /*
  * -- desc --
@@ -38,7 +47,57 @@ typedef struct s_HashTable s_HashTable;
  * Returns NULL if fail to malloc in heap
  *
  * */
-s_HashTable *HSTB_create(unsigned int size, unsigned int hash_seed);
+s_HashTable *HSTB_create(unsigned int size);
+
+
+
+// ## getter ##
+
+/*
+ * -- desc --
+ * get value through key.
+ *
+ *
+ * -- param --
+ * @table - table that operation will be performed on
+ * @key - the key to find the value
+ *
+ * -- return --
+ * returns value if the particular `s_HashNode` is occupied, else return NULL
+ * */
+u_GP HSTB_get(s_HashTable *table, char *key);
+
+
+
+// ## manipulator ##
+
+/*
+ * -- desc --
+ * Add key value pair to s_HashTable.
+ *
+ * -- param --
+ * @table - table that operation will be performed on
+ * @key - the key
+ * @value - value to be added
+ * @type - value's type
+ *
+ * -- return --
+ * return true on success, else return false.
+ * */
+bool HSTB_set(s_HashTable *table, char *key, u_GP value, e_GPT type);
+
+/*
+ * -- desc --
+ * 'Remove' key value pair from `s_HashTable`.
+ *
+ * -- param --
+ * @table - table that operation will be performed on
+ * @key - the key to find the value
+ *
+ * -- return --
+ * return true on success, else return false. (it fails when the `s_HashNode` is not occupied)
+ * */
+bool HSTB_unset(s_HashTable *table, char *key);
 
 /*
  * -- desc --
@@ -59,6 +118,10 @@ s_HashTable *HSTB_create(unsigned int size, unsigned int hash_seed);
  * */
 bool HSTB_resize(s_HashTable *table, unsigned int size);
 
+
+
+// ## free ## 
+
 /*
  * -- desc --
  * free HashTable
@@ -69,78 +132,11 @@ bool HSTB_resize(s_HashTable *table, unsigned int size);
  * -- return --
  * return true on success, else return false.
  * */
-bool HSTB_free(s_HashTable *table);
+void HSTB_free(s_HashTable *table);
 
-/*
- * -- desc --
- * Add key value pair to s_HashTable.
- *
- * -- param --
- * @table - table that operation will be performed on
- * @key - the key
- * @value - value to be added
- * @type - value's type
- *
- * -- return --
- * return true on success, else return false.
- *
- * -- Note --
- * it fails when you try to add key already exist, or
- * you just found a phenomenon called 'different key produce same integer', go to line 13 and see 
- * how `s_HashTable` works. Hope you figure out what happened
- * */
-bool HSTB_add(s_HashTable *table, char *key, u_GP value, e_GPT type);
 
-/*
- * -- desc --
- * Change value through the key given.
- *
- * -- param --
- * @table - table that operation will be performed on
- * @key - the key to find the value
- * @value - new value
- * @type - new value's type
- *
- * -- return --
- * return true on success, else return false.
- *
- * -- Note --
- * it fails when you try to add key already exist, or
- * you just found a phenomenon called 'different key produce same integer', go to line 13 and see 
- * how `s_HashTable` works. Hope you figure out what happened
- * */
-bool HSTB_changeValue(s_HashTable *table, char *key, u_GP value, e_GPT type);
 
-/*
- * -- desc --
- * 'Remove' key value pair from `s_HashTable`.
- *
- * -- param --
- * @table - table that operation will be performed on
- * @key - the key to find the value
- *
- * -- return --
- * return true on success, else return false. (it fails when the `s_HashNode` is not occupied)
- *
- * -- Note --
- * Well... It just set the `is_occupied` from true to false, that means you cannot change the
- * value on that slot and the slot is available to be occupied through `HSTB_add`. 
- * */
-bool HSTB_remove(s_HashTable *table, char *key);
-
-/*
- * -- desc --
- * get value through key.
- *
- *
- * -- param --
- * @table - table that operation will be performed on
- * @key - the key to find the value
- *
- * -- return --
- * returns value if the particular `s_HashNode` is occupied, else return NULL
- * */
-u_GP HSTB_get(s_HashTable *table, char *key);
+// ## print ##
 
 /*
  * -- desc --
