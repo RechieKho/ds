@@ -152,6 +152,8 @@ u_GP LNLS_getValue(s_LinkedNode* node);
  * */
 e_GPT LNLS_getType(s_LinkedNode *node);
 
+bool LNLS_isInList(s_LinkedNode *node);
+
 /*
  * -- desc --
  * Insert s_LinkedNode at index given in a s_LinkedList, the index of inserted node = index given

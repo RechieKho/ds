@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <string.h>
 
 #include "LinkedList.h"
 #include "GP.h"
@@ -89,6 +90,7 @@ s_LinkedList **LNLS_createLists(unsigned int count)
 
 
 // ## getter ##
+
 bool LNLS_isIndexValid(s_LinkedList *list, unsigned int index)
 {
 	return index < list->length;
@@ -136,6 +138,11 @@ e_GPT LNLS_getType(s_LinkedNode *node)
 	return node != NULL? node->type : GPT_NULL;
 }
 
+bool LNLS_isInList(s_LinkedNode *node)
+{
+	return node != NULL? node->is_in_list : false;
+}
+
 
 
 // ## manipulator ##
@@ -147,6 +154,7 @@ bool LNLS_insertNode(s_LinkedList *list, s_LinkedNode *new_node, unsigned int in
 		list->first_node = new_node;
 		list->last_node = new_node;
 		list->length += 1;
+		new_node->is_in_list = true;
 		return true;
 	}
 
@@ -227,7 +235,8 @@ s_LinkedNode *LNLS_popNode(s_LinkedList *list, unsigned int index)
 	}
 	else if(index == list->length - 1) {
 		// end of s_LinkedList
-		LNLS_getNode(list, index-1)->next = NULL;
+		s_LinkedNode *prev = LNLS_getNode(list, index - 1);
+		prev->next = NULL;
 	}
 	else {
 		s_LinkedNode *prev = popped->prev;
@@ -253,11 +262,14 @@ bool LNLS_freeNode(s_LinkedList *list, unsigned int index)
 	return true;
 }
 
+// Cannot fix it sadly
 unsigned int LNLS_freeValue(s_LinkedList *list, u_GP value, int count)
 {
 	s_LinkedNode *node = list->first_node;
-	int deleted_count;
+	int deleted_count = 0;
 	for(unsigned int i = 0; i < list->length; i++ ){
+		printf("checking is %i same as value given\n", i);
+		printf("If this won't print means strcmp won't work = %s\n", node->value.STR == value.STR? "true": "false");
 		if( 
 			(node->type == GPT_PTR && node->value.PTR == value.PTR) ||
 			(node->type == GPT_STR && node->value.STR == value.STR) ||
@@ -265,9 +277,14 @@ unsigned int LNLS_freeValue(s_LinkedList *list, u_GP value, int count)
 			(node->type == GPT_INT && node->value.INT == value.INT) ||
 			(node->type == GPT_DBL && node->value.DBL == value.DBL)
 		  ){
-		  	if(LNLS_freeNode(list, i)) deleted_count++;
+			printf("trying to delete %i\n", i);
+		  	if(LNLS_freeNode(list, i)) {
+				deleted_count++; 
+				printf("delete %i\n", i);
+			}
 			if(count>0 && deleted_count >= count) return deleted_count;
 		}
+		printf("finish checking %i\n", i);
 		node = node->next;
 	}
 	return deleted_count;

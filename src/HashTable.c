@@ -74,7 +74,7 @@ static void assignToHN(s_HashNode *node, char *key, u_GP value, e_GPT type)
 // get the list that contains `key` in the `table`
 static s_LinkedList *getListContainsKey(s_HashTable *table, char *key)
 {
-	unsigned int index = hash(key, table->size);
+	unsigned int index = hash(key, table->size - 1);
 	return table->ALN[index];
 }
 
@@ -156,7 +156,6 @@ bool HSTB_set(s_HashTable *table, char *key, u_GP value, e_GPT type)
 		if(!LNLS_preppend(list, (u_GP) (void *) new_table_node, GPT_PTR)){
 			// fail to add, free and quit
 			free(new_table_node);
-			printf("asfd\n");
 			return false;
 		}
 		// add key to keys
@@ -178,7 +177,7 @@ bool HSTB_unset(s_HashTable *table, char *key)
 	if(list_node == NULL) return true; // Not contain key
 	s_HashNode *table_node = (s_HashNode *) LNLS_getValue(list_node).PTR;
 	free(table_node);
-	if(LNLS_freeValue(list, (u_GP) (void *) table_node, 1) <= 1) {
+	if(LNLS_freeValue(list, (u_GP) (void *) table_node, 1)) {
 		// remove key
 		LNLS_freeValue(table->keys, (u_GP) key, 1);
 		return true;

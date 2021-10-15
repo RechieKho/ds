@@ -11,9 +11,19 @@ int main()
 	printf("Testing LinkedList.c\n");
 	s_LinkedList *list = LNLS_createList();
 	LNLS_insert(list, (u_GP) 17, GPT_INT, 0);
+	LNLS_insert(list, (u_GP) 17, GPT_INT, 0);
 	LNLS_insert(list, (u_GP) 15, GPT_INT, 1);
 	LNLS_append(list, (u_GP) "This is weird", GPT_STR);
 	LNLS_preppend(list, (u_GP) "This is weird", GPT_STR);
+
+	LNLS_print(list);
+
+	LNLS_freeValue(list, (u_GP) 17, 0);
+
+
+	LNLS_print(list);
+
+	LNLS_freeValue(list, (u_GP) 17, 2);
 
 	LNLS_print(list);
 
@@ -23,10 +33,11 @@ int main()
 
 	printf("\n");
 
+	return 0;
 
 	printf("Testing HashTable.c\n");
 
-	s_HashTable *table = HSTB_create(100);
+	s_HashTable *table = HSTB_create(10);
 	HSTB_set(table, "Cinamon", (u_GP) "Hello worldys", GPT_STR);
 	HSTB_set(table, "Testor", (u_GP) 45, GPT_INT);
 	HSTB_set(table, "Testoring", (u_GP) "lolas", GPT_STR);
