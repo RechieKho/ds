@@ -1,18 +1,8 @@
-# DS (Data Structure)
-`DS` is a C library that contains a [`HashTable`](https://www.youtube.com/watch?v=2Ti5yvumFTU) and a [`LinkedList`](https://www.youtube.com/watch?v=VOpjAHCee7c).
+# Data structure
 
-## Dependency
-- [GCC](https://gcc.gnu.org/)
-- make
+I wasted my time on this... I wrote a linked list. I should just use std::vector. Just... Very sad.
+The linked list big O notation is O(n/3), this is what I can say.
 
-## Development environment
-This project is developed in Linux environment (Gentoo). 
+run `g++ src/main.cpp -o list_test` to compile it. 
 
-## DOCUMENTATION
-All naming convention are specified in [`Style.md`](Style.md). The documentation of each function are written in header files. 
-
-## Trying out
-Make sure the [dependency](#dependency) is fulfilled. Git clone this repo (`git clone https://github.com/RechieKho/ds.git`). Run `make`. The binary will be output in the `bin/` directory. Edit the `src/main.c` and try out the `HashTable` and `LinkedList`. Most of the time, you do not need to worry about the header dependency as the `Makefile` will calculate the depencency for you (with the help of `gcc` compiler). 
-
-## Notice 
-This package have flaws, I can't delete node in linked list by value. I don't know when I will fix it soo... don't use it.
+Read [`List.h`]("./src/List.h") for the implementation.
